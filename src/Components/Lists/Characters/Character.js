@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { CHARACTERS_API } from '../../../config';
 
 class Character extends Component {
 
@@ -10,7 +11,8 @@ class Character extends Component {
     }
 
     componentDidMount() {
-        axios.get(`https://swapi.co/api/people/${this.state.id}/`)
+        const url = CHARACTERS_API + this.state.id + "/";
+        axios.get(url)
           .then(res => {
             const character = res.data;
             this.setState({ character });

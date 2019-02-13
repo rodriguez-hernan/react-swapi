@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-
+import { CHARACTERS_API } from '../../../config';
 import { addCharId } from '../../../Utilities/misc';
 
 import axios from 'axios';
@@ -11,7 +11,7 @@ class CharacterList extends Component {
     }
     
     componentDidMount() {
-        axios.get(`https://swapi.co/api/people/`)
+        axios.get(CHARACTERS_API)
           .then(res => {
             const characters = res.data;
             this.setState({ characters: addCharId(characters.results) });

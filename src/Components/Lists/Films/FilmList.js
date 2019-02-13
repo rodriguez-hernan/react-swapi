@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { FILMS_API } from '../../../config';
 
 class FilmList extends Component {
     
@@ -8,7 +9,7 @@ class FilmList extends Component {
     }
     
     componentDidMount() {
-        axios.get(`https://swapi.co/api/films/`)
+        axios.get(FILMS_API)
           .then(res => {
             const films = res.data;
             this.setState({ films: films.results });

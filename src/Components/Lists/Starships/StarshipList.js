@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import { getJedis } from '../../../Actions/actions';
 
 class StarshipList extends Component {
     
-    state = {
-        ships: []
+    constructor(props){
+        super(props);
+        this.props.getJedis();
     }
 
-    componentDidMount() {
-        axios.get(`https://swapi.co/api/starships/`)
-          .then(res => {
-            const ships = res.data;
-            this.setState({ ships: ships.results });
-            console.log(this.state)
-        })
+    componentDidMount(){
+        console.log(this.props);
+        
     }
     
     render() {
@@ -28,7 +28,7 @@ class StarshipList extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        { this.state.ships.map(ship => (
+                        { this.props.ships.map(ship => (
                             <tr key={ship.created}>
                                 <td>{ship.name}</td>
                                 <td>{ship.model}</td>
@@ -42,4 +42,17 @@ class StarshipList extends Component {
     }
 }
 
-export default StarshipList;
+// En mapStateToProps, pasas el state como parametro y mapeas lo que necesites del state a los props de este 
+// componente. Asi solo tenes que usar props en el componente.
+const mapStateToProps = (state) => {
+    console.log("state", state)
+    return { ships: state.ships }
+} 
+
+// En mapDispatchToProps, pasas el dispatch (que viene del store) y pasas un objeto con las funciones que
+// necesitas del action. Al parecer esto mapea las funciones a una prop tambien
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators( {getJedis}, dispatch );
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(StarshipList);
