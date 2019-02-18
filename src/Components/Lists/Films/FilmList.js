@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import { FILMS_API } from '../../../config';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import { getFilms } from '../../../Actions/film_action';
 
 class FilmList extends Component {
     
-    state = {
-        films: []
+    constructor(props){
+        super(props);
+        this.props.getFilms();
+        console.log(this.props.films);
     }
     
     componentDidMount() {
-        axios.get(FILMS_API)
-          .then(res => {
-            const films = res.data;
-            this.setState({ films: films.results });
-            console.log(this.state)
-        })
+        console.log(this.props.films);
     }
     
     render() {
@@ -29,13 +28,9 @@ class FilmList extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        { this.state.films.map(film => (
-                            <tr key={film.episode_id}>
-                                <td>{film.title}</td>
-                                <td>{film.director}</td>
-                                <td>{film.release_date}</td>
-                            </tr>  
-                        ))}
+                        {
+                            this.props.films.map( (film, index) => <FilmItem film={film} key={index}/>)
+                        }
                     </tbody>
                 </table>
             </div>
@@ -43,4 +38,27 @@ class FilmList extends Component {
     }
 }
 
-export default FilmList;
+const FilmItem = ({film}) => {
+    return (
+        <tr>
+        <td>{film.title}</td>
+        <td>{film.director}</td>
+        <td>{film.release_date}</td>
+        </tr>
+    )
+}
+
+// En mapStateToProps, pasas el state como parametro y mapeas lo que necesites del state a los props de este 
+// componente. Asi solo tenes que usar props en el componente.
+const mapStateToProps = (state) => {
+    console.log("state", state.films)
+    return { films: state.films }
+} 
+
+// En mapDispatchToProps, pasas el dispatch (que viene del store) y pasas un objeto con las funciones que
+// necesitas del action. Al parecer esto mapea las funciones a una prop tambien
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators( {getFilms}, dispatch );
+}
+
+export default  connect(mapStateToProps, mapDispatchToProps)(FilmList);

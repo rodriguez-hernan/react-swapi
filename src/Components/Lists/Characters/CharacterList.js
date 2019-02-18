@@ -1,22 +1,18 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { CHARACTERS_API } from '../../../config';
-import { addCharId } from '../../../Utilities/misc';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-import axios from 'axios';
+//import { Link } from 'react-router-dom';
+import { getAllCharacters } from '../../../Actions/character_action';
 
 class CharacterList extends Component {
-    state = {
-        characters: []
+    constructor(props){
+        super(props);
+        this.props.getAllCharacters();
     }
     
     componentDidMount() {
-        axios.get(CHARACTERS_API)
-          .then(res => {
-            const characters = res.data;
-            this.setState({ characters: addCharId(characters.results) });
-            console.log(this.state)
-        })
+        console.log("componentDidMount, characters...", this.props.characters)
     }
 
     render() {
@@ -31,15 +27,9 @@ class CharacterList extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        { this.state.characters.map(person => (
-                            <tr key={person.id}>
-                                <td>
-                                <Link to={`/characters/${person.id}`}>{person.name}</Link>
-                                </td>
-                                <td>{person.birth_year}</td>
-                                <td>{person.gender}</td>
-                            </tr>  
-                        ))}
+                        {
+                            this.props.characters.map( (character, index) => <CharacterItem character={character} key={index}/>)
+                        }
                     </tbody>
                 </table>
             </div>
@@ -47,4 +37,26 @@ class CharacterList extends Component {
     }
 }
 
-export default CharacterList;
+const CharacterItem = ({character}) => {
+    return (
+        <tr>
+        <td>{character.name}</td>
+        <td>{character.birth_year}</td>
+        <td>{character.gender}</td>
+        </tr>
+    )
+}
+
+// En mapStateToProps, pasas el state como parametro y mapeas lo que necesites del state a los props de este 
+// componente. Asi solo tenes que usar props en el componente.
+const mapStateToProps = (state) => {
+    console.log("{mapStateToProps}  state", state)
+    return { characters: state.character }
+} 
+
+// En mapDispatchToProps, pasas el dispatch (que viene del store) y pasas un objeto con las funciones que
+// necesitas del action. Al parecer esto mapea las funciones a una prop tambien
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators( {getAllCharacters}, dispatch );
+}
+export default connect(mapStateToProps, mapDispatchToProps)(CharacterList);

@@ -2,18 +2,18 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { getJedis } from '../../../Actions/actions';
+import { getJedis } from '../../../Actions/spaceship_action';
 
 class StarshipList extends Component {
     
     constructor(props){
         super(props);
         this.props.getJedis();
+        console.log(this.props);
     }
 
     componentDidMount(){
-        console.log(this.props);
-        
+        //console.log(this.props);
     }
     
     render() {
@@ -28,13 +28,9 @@ class StarshipList extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        { this.props.ships.map(ship => (
-                            <tr key={ship.created}>
-                                <td>{ship.name}</td>
-                                <td>{ship.model}</td>
-                                <td>{ship.manufacturer}</td>
-                            </tr>  
-                        ))}
+                        {
+                            this.props.ships.map( (ship, index) => <ShipItem ship={ship} key={index}/>)
+                        }
                     </tbody>
                 </table>
             </div>
@@ -42,11 +38,22 @@ class StarshipList extends Component {
     }
 }
 
+const ShipItem = ({ship}) => {
+    return (
+        <tr>
+        <td>{ship.name}</td>
+        <td>{ship.model}</td>
+        <td>{ship.manufacturer}</td>
+        </tr>
+    )
+}
+
+
 // En mapStateToProps, pasas el state como parametro y mapeas lo que necesites del state a los props de este 
 // componente. Asi solo tenes que usar props en el componente.
 const mapStateToProps = (state) => {
     console.log("state", state)
-    return { ships: state.ships }
+    return { ships: state.spaceship }
 } 
 
 // En mapDispatchToProps, pasas el dispatch (que viene del store) y pasas un objeto con las funciones que
